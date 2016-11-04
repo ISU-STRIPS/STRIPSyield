@@ -1,0 +1,25 @@
+Package: STRIPSyield
+Title: STRIPS yield data
+Version: 0.1
+Authors@R: c(
+    person("Jarad", "Niemi", email = "niemi@iastate.edu", role = c("aut", "cre")),
+    person("Matthew", "Liebman", email = "mliebman@iastate.edu", role = "aut")
+    )
+Description: Crop yield data for STRIPS watersheds including observations for
+    both soybean and corn years.
+Depends:
+    R (>= 3.0)
+Suggests:
+    STRIPSMeta,
+    dplyr,
+    tidyr,
+    testthat,
+    knitr,
+    rmarkdown
+Remotes:
+    ISU-STRIPS/STRIPSMeta
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 5.0.1
+VignetteBuilder: knitr
