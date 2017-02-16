@@ -1,4 +1,4 @@
-#' Crop yield data data
+#' Crop yield data
 #'
 #' Average crop yield for all watersheds from 2007-2016
 #'
@@ -31,3 +31,17 @@
 #'   left_join(yield_conversion, by="crop") %>%
 #'   mutate(yield_Mgha = dryyield_buac * Mgha_per_buac)
 "yield_conversion"
+
+
+
+#' Raw crop yield data
+#'
+#' Raw crop yield
+#'
+#' @format A data.frame with 4 variables: \code{longitude}, \code{latitude},
+#' \code{moisture}, \code{crop}, \code{altitude}, \code{dry_bu_ac}
+#' (dry bushels per acre), \code{watershed}, and \code{year}
+#'
+#' @seealso \code{\link{yield}}
+#'
+"raw_yield"

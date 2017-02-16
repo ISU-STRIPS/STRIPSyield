@@ -3,7 +3,7 @@
 \docType{data}
 \name{yield}
 \alias{yield}
-\title{Crop yield data data}
+\title{Crop yield data}
 \format{A data.frame with 4 variables: \code{year}, \code{watershed},
 \code{crop}, and \code{dryyield_buac} (bushels per acre)}
 \usage{
