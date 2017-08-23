@@ -17,4 +17,3 @@ Raw crop yield
 \code{\link{yield}}
 }
 \keyword{datasets}
-

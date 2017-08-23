@@ -23,4 +23,3 @@ yield <- yield \%>\%
 \code{\link{yield_conversion}}
 }
 \keyword{datasets}
-
