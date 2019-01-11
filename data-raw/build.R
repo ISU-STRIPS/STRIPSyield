@@ -55,21 +55,13 @@ classify_watersheds <- function(yieldDF, boundaryDF) {
 
   parallel::stopCluster(cl)
 
-  # l <- lapply(boundaryLists, function(boundary) {
-  #   print(Sys.time())
-  #   in_hull(
-  #     vertices = boundary,
-  #     newData  = yieldDF[, c("x", "y")]
-  #   )
-  # })
-
   mat <- do.call(cbind, l)
   mat <- cbind(
     mat,
     "OffBounds" = ifelse(rowSums(mat) < 1, TRUE, FALSE)
   )
 
-  if(sum(rowSums(mat) > 1)) {
+  if (sum(rowSums(mat) > 1)) {
     ind <- which(rowSums(mat) > 1)
 
     warning(
@@ -92,7 +84,7 @@ classify_watersheds <- function(yieldDF, boundaryDF) {
   rightDF$polygon <- ave(rightDF$area, list(rightDF$watershed), FUN = seq_along)
 
   joinDF <- merge(leftDF, rightDF, all.x = TRUE)
-  joinDF <- joinDF[sort(joinDF$id), c("watershed", "vegetation", "area", "polygon")]
+  joinDF <- joinDF[order(joinDF$id), c("watershed", "vegetation", "area", "polygon")]
   colnames(joinDF) <- c("watershed", "watersheadVegetation", "watersheadArea", "watersheadPolygon")
 
   joinDF
@@ -121,9 +113,9 @@ build_extra <- function(yieldDF, boundaryDF) {
   ord <- c(
     "site", "watershed", "block", "blockArea", "treatment", "prairiePercentage",
     "prairiePosition", "slope", "year", "crop", "swath", "record", "date",
-    "timestamp", "x", "y", "elevation", "speed", "direction", "distance",
+    "x", "y", "elevation", "speed", "direction", "distance", "timelapse",
     "flow", "moisture", "yield"
   )
 
-  structure(extraDF[, ord], class = c("extraDF", "data.frame"))
+  extraDF[, ord]
 }

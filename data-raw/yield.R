@@ -8,7 +8,6 @@ curate_yield_dbf_template1 <- function(shape) {
   dbf  <- shape$dbf$dbf
   t    <- as.POSIXct(dbf$TIME, origin = "1970-01-01")
   date <- as.Date(t)
-  time <- as.character(t)
   site <- curate_sitename(dbf$FIELD)
   crop <- curate_cropname(dbf$CROP)
 
@@ -18,13 +17,13 @@ curate_yield_dbf_template1 <- function(shape) {
     swath     = dbf$SWATH,
     record    = dbf$ID,
     date      = date,
-    timestamp = time,
     x         = dbf$LONGITUDE,
     y         = dbf$LATITUDE,
     elevation = dbf$ALTITUDE,
     speed     = dbf$SPEED,
     direction = NA,
     distance  = dbf$DISTANCE,
+    timelapse = dbf$TIMELAPSE,
     flow      = dbf$FLOW,
     moisture  = dbf$MOISTURE,
     yield     = dbf$DRY_BU_AC
@@ -39,7 +38,6 @@ curate_yield_dbf_template1 <- function(shape) {
 #' @seealso \code{\link{curate_dbf}}
 curate_yield_dbf_template2 <- function(shape) {
   dbf  <- shape$dbf$dbf
-  time <- NA
   site <- curate_sitename(dbf$Field)
   crop <- curate_cropname(dbf$Product)
 
@@ -49,13 +47,13 @@ curate_yield_dbf_template2 <- function(shape) {
     swath     = dbf$Swth_Wdth_,
     record    = dbf$Obj__Id,
     date      = dbf$Date,
-    timestamp = time,
     x         = shape$shp$shp[, "x"],
     y         = shape$shp$shp[, "y"],
     elevation = dbf$Elevation_,
     speed     = dbf$Speed_mph_,
     direction = dbf$Track_deg_,
     distance  = dbf$Distance_f,
+    timelapse = dbf$Duration_s,
     flow      = dbf$Crop_Flw_M,
     moisture  = dbf$Moisture__,
     yield     = dbf$Yld_Vol_Dr
@@ -147,19 +145,23 @@ curate_all_yield_shapefiles <- function(pathIn, pathOut, recursive = TRUE, verbo
 #' Creates a `yield` data.frame from one or many shape lists.
 #'
 #' @param shapes A named list with a valid structure for a shapefile (e.g. one created by \code{\link{read_shapefile}}).
-#' @return A yield data.frame containing the following columns: site, year, crop, swath, record, date, timestamp, x, y, elevation, speed, direction, distance, flow, moisture, yield.
+#' @return A yield data.frame containing the following columns: site, year, crop, swath, record, date, x, y, elevation, speed, direction, distance, flow, moisture, yield.
 build_yield <- function(shapes) {
   DF <- do.call(
     rbind,
     lapply(lapply(shapes, `[[`, "dbf"), `[[`, "dbf")
   )
 
-  DF$timestamp           <- as.POSIXct(DF$timestamp)
   DF$year                <- factor(substr(DF$date, 0, 4))
   rowsOut                <- DF$year == "2004"
   columnOrder            <- c(1, 16, 2:15)
   DF                     <- DF[!rowsOut, columnOrder]
   DF$year                <- droplevels(DF$year)
+
+  # Rescale from inches to foot
+  ind      <- DF$year %in% c("2007", "2008", "2009", "2010", "2012")
+  DF$swath    <- ifelse(ind, DF$swath / 12, DF$swath)
+  DF$distance <- ifelse(ind, DF$distance / 12, DF$distance)
 
   rownames(DF)           <- NULL
   attr(DF, "data_types") <- NULL

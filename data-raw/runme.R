@@ -43,11 +43,17 @@ yieldSummary   <- "TO DO"
 
 # 5. Rename, subset and export --------------------------------------------
 boundaries     <- boundaryDF
-yield          <- yieldExtra[, c(1:3, 5, 9, 10, 15:16, 22:23)]
+yield          <- yieldExtra[
+  ,
+  c(
+    "site", "watershed", "block", "treatment", "year", "crop", "x", "y",
+    "moisture", "yield"
+  )
+]
 
-devtools::use_data(boundaries, overwrite = TRUE)
-devtools::use_data(yield,      overwrite = TRUE)
-devtools::use_data(yieldExtra, overwrite = TRUE)
+usethis::use_data(boundaries, overwrite = TRUE)
+usethis::use_data(yield,      overwrite = TRUE)
+usethis::use_data(yieldExtra, overwrite = TRUE)
 
 # 6. Build legacy datasets ------------------------------------------------
 source('data-raw/legacy.R')

@@ -76,8 +76,8 @@ k <- knitr::kable(
 kableExtra::kable_styling(k, latex_options = c("scale_down"))
 
 ## ------------------------------------------------------------------------
-actions <- c("Rename", "Drop", "TBD", "Reformat")
-action  <- c(1, 1, 1, 3, 4, 3, 1, 2, 1, 2, 3, 4, 1, 4, 1, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 3)
+actions <- c("Rename", "Drop", "Reformat", "Reformat")
+action  <- c(1, 1, 1, 1, 4, 2, 3, 3, 1, 2, 2, 2, 1, 2, 1, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1, 1)
 
 k <- knitr::kable(
   cbind(name = as.character(dShape2009$name), action = actions[action]),
@@ -101,7 +101,7 @@ kableExtra::kable_styling(k, latex_options = c("scale_down"))
 
 ## ------------------------------------------------------------------------
 actions <- c("Rename", "Drop", "TBD", "Reformat")
-action  <- c(4, 2, 4, 1, 1, 1, 4, 1, 1, 4, 1, 4, 1, 1, 3, 3, 3, 3, 4, 4, 4, 4, 4, 2, 2, 2, 2, 2, 2, 2, 1, 3, 3, 4, 4)
+action  <- c(4, 2, 4, 1, 1, 1, 1, 1, 2, 2, 1, 2, 1, 1, 2, 2, 1, 2, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2)
 
 k <- knitr::kable(
   cbind(name = as.character(dShape2015$name), action = actions[action]),
@@ -114,7 +114,7 @@ kableExtra::kable_styling(k)
 ## ------------------------------------------------------------------------
 shape2015  <- read.shapefile("../data-raw/yield_curated/2015-basswood")
 dShape2015 <- describe_shapefile(shape2015)
-units      <- c(NA, NA, "Unknown", "Integer", "Datetime", "POSIXct", "Unknown", "Unknown", "Unknown (feets?)", "MPH", "Degrees", "Unknown", "Unknown", "% (hundreds)", "Unknown")
+units      <- c(NA, NA, "Foot", "Integer", "Date", "WGS84", "WGS84", "Foot above sea", "Miles per hour", "Arc degrees", "Foot", "Seconds", "Pounds per second", "% (hundreds)", "Bushels per acre")
 
 k <- knitr::kable(
   cbind(dShape2015[, 1:2], units),

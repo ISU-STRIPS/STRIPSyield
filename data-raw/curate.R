@@ -27,7 +27,10 @@ string_replace <- function(x, patterns, replacements) {
       )
     )
 
-    pos <- which(patterns == names(ord))
+    pos <- which(patterns %in% names(ord))
+
+    if (length(patterns) < length(names(ord)))
+      stop(sprintf("%s %s %s ", x, paste(patterns), paste(names(ord))))
 
     if (length(ord) < 1) {
       warning(sprintf("The value %s (shapefile) is unknown.", x), call. = FALSE)
@@ -35,7 +38,14 @@ string_replace <- function(x, patterns, replacements) {
     }
 
     if (length(ord) > 1 & length(unique(replacements[pos])) > 1) {
-      warning(sprintf("The value %s (shapefile) cannot be uniquely matched.", x), call. = FALSE)
+      warning(
+        sprintf(
+          "The value %s (shapefile) cannot be uniquely matched and was replaced by %s.",
+          x,
+          replacements[pos[1]]
+        ),
+        call. = FALSE
+      )
       return(replacements[pos[1]])
     }
 
