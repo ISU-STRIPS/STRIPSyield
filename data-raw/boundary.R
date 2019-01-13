@@ -77,6 +77,7 @@ curate_boundary_template <- function(shape) {
     s <- shp[[i]]
 
     data.frame(
+      polygon    = i,
       x          = s$points$X,
       y          = s$points$Y,
       area       = dbf[i, ]$AREA,
@@ -97,7 +98,7 @@ build_boundaries <- function(shapes) {
     DF           <- curate_boundary_template(shapes[[i]])
     DF$watershed <- factor(curate_watershedname(names(shapes)[i]))
     DF
-    DF[, c(5, 1:4)]
+    DF[, c(6, 1:5)]
   })
 
   DF                     <- do.call(rbind, l)

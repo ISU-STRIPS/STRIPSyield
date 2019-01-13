@@ -105,7 +105,7 @@ curate_watershedname <- function(x) {
 #' @seealso \code{\link{string_replace}}
 curate_vegetation <- function(x) {
   patterns     <- c("row",      "p",         "c",        "sediment")
-  replacements <- c("Row crop", "Perennial", "Row crop", "Row Crop")
+  replacements <- c("Row crop", "Perennial", "Row crop", "Row crop")
   string_replace(x, patterns, replacements)
 }
 
