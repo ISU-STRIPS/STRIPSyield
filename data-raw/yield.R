@@ -152,19 +152,91 @@ build_yield <- function(shapes) {
     lapply(lapply(shapes, `[[`, "dbf"), `[[`, "dbf")
   )
 
-  DF$year                <- factor(substr(DF$date, 0, 4))
-  rowsOut                <- DF$year == "2004"
-  columnOrder            <- c(1, 16, 2:15)
-  DF                     <- DF[!rowsOut, columnOrder]
-  DF$year                <- droplevels(DF$year)
-
-  # Rescale from inches to foot
-  ind      <- DF$year %in% c("2007", "2008", "2009", "2010", "2012")
-  DF$swath    <- ifelse(ind, DF$swath / 12, DF$swath)
-  DF$distance <- ifelse(ind, DF$distance / 12, DF$distance)
+  DF$year       <- factor(substr(DF$date, 0, 4))
+  DF$year       <- postprocess_year(DF)
+  DF$swath      <- postprocess_swath(DF)
+  DF$distance   <- postprocess_distance(DF)
+  DF$record     <- postprocess_record(DF)
 
   rownames(DF)           <- NULL
   attr(DF, "data_types") <- NULL
 
+  rowOrder      <- order(DF$site, DF$year, DF$record)
+  columnOrder   <- c(1, 16, 2:15)
+  DF            <- DF[rowOrder, columnOrder]
+
   DF
+}
+
+#' Post processing rule for year
+#' Replaces year "2004" for "2008".
+#'
+#' @param DF A yield data.frame containing the following columns:
+#' site, year, crop, swath, record, date, x, y, elevation, speed,
+#' direction, distance, flow, moisture, yield.
+#' @return A character vector with the year.
+postprocess_year <- function(DF) {
+  levels(DF$year)[levels(DF$year) == "2004"] <- "2008"
+  factor(DF$year, levels = sort(unique(as.character(DF$year))))
+}
+
+#' Post processing rule for swath width.
+#' Rescale swath width from inches to foot for rows corresponding to
+#' years 2007, 2008, 2009, 2009, 2010, 2012.
+#'
+#' @param DF A yield data.frame containing the following columns:
+#' site, year, crop, swath, record, date, x, y, elevation, speed,
+#' direction, distance, flow, moisture, yield.
+#' @return A numeric vector with swath width in foot.
+postprocess_swath <- function(DF) {
+  ind <- DF$year %in% c("2007", "2008", "2009", "2010", "2012")
+  ifelse(ind, DF$swath / 12, DF$swath)
+}
+
+#' Post processing rule for distance.
+#' Rescale distance from inches to foot for rows corresponding to
+#' years 2007, 2008, 2009, 2009, 2010, 2012.
+#'
+#' @param DF A yield data.frame containing the following columns:
+#' site, year, crop, swath, record, date, x, y, elevation, speed,
+#' direction, distance, flow, moisture, yield.
+#' @return A numeric vector with distance in foot.
+postprocess_distance <- function(DF) {
+  ind <- DF$year %in% c("2007", "2008", "2009", "2010", "2012")
+  ifelse(ind, DF$distance / 12, DF$distance)
+}
+
+#' Post processing rule for record.
+#' Realign record index so that the index is always increasing
+#' for any combination of year and site.
+#'
+#' @param DF A yield data.frame containing the following columns:
+#' site, year, crop, swath, record, date, x, y, elevation, speed,
+#' direction, distance, flow, moisture, yield.
+#' @return A numeric vector with an increasing index.
+postprocess_record <- function(DF) {
+  # ind     <-
+  #   DF$year %in% c("2013", "2014", "2015") & DF$site == "Orbweaver" |
+  #   DF$year == "2014" & DF$site == "Interim" |
+  #   DF$year == "2011" & DF$site == "Orbweaver"
+
+  ind     <- seq_along(DF$record)
+  splits  <- split(
+    seq_along(DF$record[ind]),
+    list(DF$site[ind], DF$year[ind]),
+    drop = TRUE
+  )
+
+  records <- DF$record
+  for (splitInd in splits) {
+    breakPos <- which(diff(records[ind][splitInd]) < 0)
+    for (pos in breakPos) {
+      n      <- length(records[ind][splitInd])
+      offset <- records[ind][splitInd][pos]
+      records[ind][splitInd][(pos + 1):n] <-
+        records[ind][splitInd][(pos + 1):n] + offset
+    }
+  }
+
+  records
 }

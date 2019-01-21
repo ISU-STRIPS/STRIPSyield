@@ -8,10 +8,11 @@ Authors@R: c(
 Description: Crop yield data for STRIPS watersheds including observations for
     both soybean and corn years.
 Depends:
-    R (>= 3.0)
+    R (>= 3.0),
+    dplyr
+Imports:
+    STRIPSMeta
 Suggests:
-    STRIPSMeta,
-    dplyr,
     tidyr,
     knitr,
     rmarkdown
@@ -22,4 +23,4 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.0
 VignetteBuilder: knitr
-Imports: STRIPSMeta
+

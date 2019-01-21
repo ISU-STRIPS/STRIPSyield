@@ -71,7 +71,7 @@ After the package is loaded, two objects `yield` and `yieldExtra` containing poi
 ```{r}
 dYield <- describe_yield(yieldExtra)
 units  <- rep("Unknown", nrow(dYield))
-units  <- c(NA, NA, NA, "Hectare", NA, "% (hundreds)", NA, "% (hundreds)", NA, NA, "Unknown", "Integer", "Date", "POSIX", "Unknown", "Unknown", "Feet", "MPH", "Degrees", "Unknown", "Unknown", "% (hundreds)", "Unknown")
+units  <- c(NA, NA, "Integer", "Hectare", NA, NA, "Hectare", NA, "% (hundreds)", NA, "% (hundreds)", NA, NA, "Feet", "Integer", "Date", "Unknown", "Unknown", NA, "Feet", "MPH", "Degrees", "Seconds", "Pounds per second", "% (hundreds)", "Bushels per acre")
 extra  <- ifelse(colnames(yieldExtra) %in% colnames(yield), "Yes", "No")
 
 k <- knitr::kable(

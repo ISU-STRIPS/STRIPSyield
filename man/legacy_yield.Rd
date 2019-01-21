@@ -13,7 +13,7 @@ legacy_yield
 Average crop yield for all watersheds from 2007-2016
 }
 \examples{
-Convert from bushels per acre to Megagrams per hectare
+# Convert from bushels per acre to Megagrams per hectare
 library(dplyr)
 legacy_ <- legacy_ \%>\%
   left_join(legacy_yield_conversion, by="crop") \%>\%

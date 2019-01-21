@@ -1,8 +1,8 @@
 # Settings ----------------------------------------------------------------
 root <- "/home/luis/Downloads/STRIPS1 Research - NSNWR"
 excl <- c(".adf$") # Patterns to exclude
-incl <- c(".dbf$")
-outf <- "outDbfOnly.txt"
+incl <- c(".dbf$", ".shp$")
+outf <- "duplicated-shapefiles.txt"
 
 # Auxiliary functions -----------------------------------------------------
 printy     <- function(x) { paste(x, collapse = ", ") }

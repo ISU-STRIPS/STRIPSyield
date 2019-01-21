@@ -2,7 +2,7 @@
 #' https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html
 #' https://stackoverflow.com/a/2922778/2860744
 #'
-#' @param vertices A data.frame with three named columns: x (numeric), y (numeric), label (factor). It should contain the verticies of a (possibly irregular) polygon. Note that you may not feed this function more than one polygon (i.e. the data.frame should contain only the information of only one watershed).
+#' @param vertices A dtaa.frame with three named columns: x (numeric), y (numeric), label (factor). It should contain the verticies of a (possibly irregular) polygon. Note that you may not feed this function more than one polygon (i.e. the data.frame should contain only the information of only one watershed).
 #' @param newData  A data.frame with two named columns: x (numeric), y (numeric).
 #'
 #' @return A vector with boolean elements taking the value TRUE when the row of the coordinate point corresponding to each row of the newData data.frame lies inside the vertices of the polygon.
@@ -77,8 +77,8 @@ classify_watersheds <- function(yieldDF, boundaryDF) {
   )
 
   rightDF <- rbind(
-    unique(boundaryDF[, c("key", "watershed", "vegetation", "area")]),
-    data.frame(key = "OffBounds", watershed = "OffBounds", vegetation = "Unknown", area = -1)
+    unique(boundaryDF[, c("key", "watershed", "polygon", "vegetation", "area")]),
+    data.frame(key = "OffBounds", watershed = "OffBounds", polygon = -1, vegetation = "Unknown", area = -1)
   )
 
   rightDF$polygon <- ave(rightDF$area, list(rightDF$watershed), FUN = seq_along)
@@ -95,6 +95,7 @@ build_extra <- function(yieldDF, boundaryDF) {
     yieldDF,
     classify_watersheds(yieldDF, boundaryDF)
   )
+  colnames(yieldDF)[18] <- "vegetation"
 
   metaDF      <- as.data.frame(STRIPSMeta::watersheds[, c(1, 5, 6, 8, 9, 10, 11)])
   metaDF[, 4] <- factor(metaDF[, 4])
@@ -111,10 +112,11 @@ build_extra <- function(yieldDF, boundaryDF) {
   )
 
   ord <- c(
-    "site", "watershed", "block", "blockArea", "treatment", "prairiePercentage",
-    "prairiePosition", "slope", "year", "crop", "swath", "record", "date",
-    "x", "y", "elevation", "speed", "direction", "distance", "timelapse",
-    "flow", "moisture", "yield"
+    "site", "watershed", "watersheadPolygon", "watersheadArea", "block",
+    "blockArea", "treatment", "prairiePercentage", "prairiePosition", "slope",
+    "year", "crop", "swath", "record", "date", "x", "y", "vegetation",
+    "elevation", "speed", "direction", "distance", "timelapse", "flow",
+    "moisture", "yield"
   )
 
   extraDF[, ord]

@@ -8,7 +8,7 @@
 #' @seealso \code{\link{legacy_yield_conversion}}
 #'
 #' @examples
-#' Convert from bushels per acre to Megagrams per hectare
+#' # Convert from bushels per acre to Megagrams per hectare
 #' library(dplyr)
 #' legacy_ <- legacy_ %>%
 #'   left_join(legacy_yield_conversion, by="crop") %>%
