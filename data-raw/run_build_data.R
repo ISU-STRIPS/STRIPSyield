@@ -1,4 +1,10 @@
-# This is the only script that you should run manully to build the data objects to be distributed with the STRIPSYield package. It relies on the shapefiles as well as the many functions laid out other .R files stored in the data-raw folder. Note that the whole data-raw folder is not part of the user-facing part of the STRIPYield package: the raw shapefiles and these scripts are only meant to be used locally to build the data objects before the package is published. For further questions, see ?whatever.
+# This is the only script that you should run manully to build the data objects
+# to be distributed with the STRIPSYield package. It relies on the shapefiles as
+# well as the many functions laid out other .R files stored in the data-raw
+# folder. Note that the whole data-raw folder is not part of the user-facing
+# part of the STRIPYield package: the raw shapefiles and these scripts are only
+# meant to be used locally to build the data objects before the package is
+# published. For further questions, see ?whatever.
 
 # 0. Settings -------------------------------------------------------------
 yieldPathIn     <- "data-raw/yield_original"    # Folder where the original shapefiles are stored

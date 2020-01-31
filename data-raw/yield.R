@@ -38,6 +38,14 @@ curate_yield_dbf_template1 <- function(shape) {
 #' @seealso \code{\link{curate_dbf}}
 curate_yield_dbf_template2 <- function(shape) {
   dbf  <- shape$dbf$dbf
+
+  # Fix an error in 2016-all:
+  #   282 observations with Field == "INTERIEM" (sic) that actually belong in
+  #   Orbweaver (north)
+  fixInd <- dbf$Field == "INTERIEM" & dbf$Time == "2016-10-03"
+  if (sum(fixInd))
+    dbf[fixInd, ]$Field <- "ORB NORTH"
+
   site <- curate_sitename(dbf$Field)
   crop <- curate_cropname(dbf$Product)
 
