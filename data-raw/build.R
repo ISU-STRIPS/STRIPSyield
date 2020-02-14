@@ -1,11 +1,21 @@
-#' Test whether coordinate points lie inside a polygon. Based on the PNPOLY algorithm by W. Randolph Franklin (WRF) and rewritten in R. NOTE: The current implementation does not test if the newData coordinate points lie exactly ON the borders of the polygon.
+#' Test whether coordinate points lie inside a polygon. Based on the PNPOLY
+#' algorithm by W. Randolph Franklin (WRF) and rewritten in R. NOTE: The current
+#' implementation does not test if the newData coordinate points lie exactly ON
+#' the borders of the polygon.
 #' https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html
 #' https://stackoverflow.com/a/2922778/2860744
 #'
-#' @param vertices A dtaa.frame with three named columns: x (numeric), y (numeric), label (factor). It should contain the verticies of a (possibly irregular) polygon. Note that you may not feed this function more than one polygon (i.e. the data.frame should contain only the information of only one watershed).
-#' @param newData  A data.frame with two named columns: x (numeric), y (numeric).
+#' @param vertices A dtaa.frame with three named columns: x (numeric), y
+#'   (numeric), label (factor). It should contain the verticies of a (possibly
+#'   irregular) polygon. Note that you may not feed this function more than one
+#'   polygon (i.e. the data.frame should contain only the information of only
+#'   one watershed).
+#' @param newData  A data.frame with two named columns: x (numeric), y
+#'   (numeric).
 #'
-#' @return A vector with boolean elements taking the value TRUE when the row of the coordinate point corresponding to each row of the newData data.frame lies inside the vertices of the polygon.
+#' @return A vector with boolean elements taking the value TRUE when the row of
+#'   the coordinate point corresponding to each row of the newData data.frame
+#'   lies inside the vertices of the polygon.
 #' @export
 in_hull <- function(vertices, newData) {
   nVertices <- nrow(vertices)
@@ -30,16 +40,26 @@ in_hull <- function(vertices, newData) {
   })
 }
 
-#' Assign point coordinates to watersheds based on boundaries. This is probably one of the most ugly functions in the package, it's strongly recommended that you do not take a look at it unless you really have to.
+#' Assign point coordinates to watersheds based on boundaries. This is probably
+#' one of the most ugly functions in the package, it's strongly recommended that
+#' you do not take a look at it unless you really have to.
 #'
 #' @author Luis Damiano
-#' @param dataset A data.frame with three columns: x (numeric), y (numeric), label (factor).
-#' @param newData A data.frame with four columns: watershed (factor), watersheadVegetation (factor: Row crop or Perennial), watersheadArea (numeric), watersheadPolygon (numeric) to index the number of "subparts" inside a watershed.
+#' @param dataset A data.frame with three columns: x (numeric), y (numeric),
+#'   label (factor).
+#' @param newData A data.frame with four columns: watershed (factor),
+#'   watersheadVegetation (factor: Row crop or Perennial), watersheadArea
+#'   (numeric), watersheadPolygon (numeric) to index the number of "subparts"
+#'   inside a watershed.
 #'
-#' @return A vector with size equal to the number of rows in newData containing the watershed information each element of newData is assigned to.
+#' @return A vector with size equal to the number of rows in newData containing
+#'   the watershed information each element of newData is assigned to.
 #' @export
 classify_watersheds <- function(yieldDF, boundaryDF) {
-  # To gain some efficiency, we split the boundaries per site so that the yield coordinates points are only checked against polygon boundaries in the same site. For example, we don't check a yield coordinate point from the Orb site against the Interim boundaries.
+  # To gain some efficiency, we split the boundaries per site so that the yield
+  # coordinates points are only checked against polygon boundaries in the same
+  # site. For example, we don't check a yield coordinate point from the Orb site
+  # against the Interim boundaries.
   boundaryDF$key <- paste(boundaryDF$watershed, boundaryDF$vegetation, boundaryDF$area, sep = "-")
   boundaryLists  <- split(boundaryDF[, c("x", "y")], boundaryDF$key)
 
@@ -65,7 +85,7 @@ classify_watersheds <- function(yieldDF, boundaryDF) {
     ind <- which(rowSums(mat) > 1)
 
     warning(
-      sprintf("Found %d yield coordinates point that could be assigned to more than one boundary. It's crazy, a probably wrong. ", length(ind))
+      sprintf("Found %d yield coordinate points that could be assigned to more than one boundary. It's crazy, probably wrong. ", length(ind))
     )
   }
 
@@ -85,7 +105,9 @@ classify_watersheds <- function(yieldDF, boundaryDF) {
 
   joinDF <- merge(leftDF, rightDF, all.x = TRUE)
   joinDF <- joinDF[order(joinDF$id), c("watershed", "vegetation", "area", "polygon")]
-  colnames(joinDF) <- c("watershed", "watersheadVegetation", "watersheadArea", "watersheadPolygon")
+  colnames(joinDF) <- c(
+    "watershed", "watersheadVegetation", "watersheadArea", "watersheadPolygon"
+    )
 
   joinDF
 }
@@ -95,14 +117,17 @@ build_extra <- function(yieldDF, boundaryDF) {
     yieldDF,
     classify_watersheds(yieldDF, boundaryDF)
   )
-  colnames(yieldDF)[18] <- "vegetation"
+  colnames(yieldDF)[19] <- "vegetation"
 
   metaDF      <- as.data.frame(STRIPSMeta::watersheds[, c(1, 5, 6, 8, 9, 10, 11)])
   metaDF[, 4] <- factor(metaDF[, 4])
   metaDF[, 5] <- factor(metaDF[, 5])
   metaDF[, 6] <- factor(metaDF[, 6])
   metaDF[, 7] <- factor(metaDF[, 7])
-  colnames(metaDF) <- c("watershed", "blockArea", "slope", "treatment", "prairiePercentage", "prairiePosition", "block")
+  colnames(metaDF) <- c(
+    "watershed", "blockArea", "slope", "treatment", "prairiePercentage",
+    "prairiePosition", "block"
+  )
 
   extraDF    <- merge(
     x     = yieldDF,
@@ -114,7 +139,7 @@ build_extra <- function(yieldDF, boundaryDF) {
   ord <- c(
     "site", "watershed", "watersheadPolygon", "watersheadArea", "block",
     "blockArea", "treatment", "prairiePercentage", "prairiePosition", "slope",
-    "year", "crop", "swath", "record", "date", "x", "y", "vegetation",
+    "year", "crop", "swath", "record", "pass", "date", "x", "y", "vegetation",
     "elevation", "speed", "direction", "distance", "timelapse", "flow",
     "moisture", "yield"
   )

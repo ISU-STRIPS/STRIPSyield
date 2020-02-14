@@ -16,6 +16,7 @@ curate_yield_dbf_template1 <- function(shape) {
     crop      = crop,
     swath     = dbf$SWATH,
     record    = dbf$ID,
+    pass      = dbf$PASS,
     date      = date,
     x         = dbf$LONGITUDE,
     y         = dbf$LATITUDE,
@@ -54,6 +55,7 @@ curate_yield_dbf_template2 <- function(shape) {
     crop      = crop,
     swath     = dbf$Swth_Wdth_,
     record    = dbf$Obj__Id,
+    pass      = dbf$Pass_Num,
     date      = dbf$Date,
     x         = shape$shp$shp[, "x"],
     y         = shape$shp$shp[, "y"],
@@ -170,8 +172,9 @@ build_yield <- function(shapes) {
   attr(DF, "data_types") <- NULL
 
   rowOrder      <- order(DF$site, DF$year, DF$record)
-  columnOrder   <- c(1, 16, 2:15)
-  DF            <- DF[rowOrder, columnOrder]
+  DF            <- DF[rowOrder, ]
+  # columnOrder   <- c(1, 16, 2:15)
+  # DF            <- DF[rowOrder, columnOrder]
 
   DF
 }
