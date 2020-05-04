@@ -22,12 +22,16 @@ source('data-raw/shapefiles.R')
 source('data-raw/yield.R')
 
 # 2. Curate the shapefiles. -----------------------------------------------
+unlink(yieldPathOut, recursive = TRUE, force = TRUE)
+
 if (!dir.exists(yieldPathOut))
   dir.create(yieldPathOut)
 
 curate_all_yield_shapefiles(yieldPathIn, yieldPathOut)
 
 # 3. Curate the boundary shapefiles ---------------------------------------
+unlink(boundaryPathOut, recursive = TRUE, force = TRUE)
+
 if (!dir.exists(boundaryPathOut))
   dir.create(boundaryPathOut)
 

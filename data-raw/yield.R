@@ -24,6 +24,7 @@ curate_yield_dbf_template1 <- function(shape) {
     speed     = dbf$SPEED,
     direction = NA,
     distance  = dbf$DISTANCE,
+    cycle     = dbf$CYCLES,
     timelapse = dbf$TIMELAPSE,
     flow      = dbf$FLOW,
     moisture  = dbf$MOISTURE,
@@ -63,7 +64,8 @@ curate_yield_dbf_template2 <- function(shape) {
     speed     = dbf$Speed_mph_,
     direction = dbf$Track_deg_,
     distance  = dbf$Distance_f,
-    timelapse = dbf$Duration_s,
+    cycle     = dbf$Duration_s,
+    timelapse = NA,
     flow      = dbf$Crop_Flw_M,
     moisture  = dbf$Moisture__,
     yield     = dbf$Yld_Vol_Dr
@@ -83,6 +85,10 @@ curate_dbf <- function(shape) {
     curated <- curate_yield_dbf_template1(shape)
   if (all(c("Product", "Elevation_", "Obj__Id", "Yld_Vol_Dr") %in% colNames))
     curated <- curate_yield_dbf_template2(shape)
+
+  # Curate field name column using coordinates
+  #   (the field column reported by shapefiles are not trustable)
+  curated$site <- curate_sitename_by_coordinates(curated$x, curated$y)
 
   curated
 }
@@ -129,26 +135,30 @@ curate_all_yield_shapefiles <- function(pathIn, pathOut, recursive = TRUE, verbo
 
     if (verbose) {
       msg <- sprintf(
-        "[%2d/%2d] %s %-*s -> %-*s ...",
+        "[%2d/%2d] %s %-*s -> %-*s ...\n",
         i, nFiles, format(Sys.time(), "%T"), nChar, fileIn, nChar, fileOut
       )
       cat(msg)
     }
 
-    wMessage <- NULL
-    tryCatch(
-      expr    = curate_shapefile(fileIn, fileOut),
-      warning = function(w) { wMessage <<- w },
-      finally = if (verbose) { cat(" DONE.\n") }
-    )
+    curate_shapefile(fileIn, fileOut)
 
-    if (verbose) {
-      msg <- sprintf(
-        "      ^ WARNING: %s\n",
-        wMessage$message
-      )
-      cat(msg)
-    }
+    # Note: tryCatch stops the process when there is a warning
+    #
+    # wMessage <- NULL
+    # tryCatch(
+    #   expr    = curate_shapefile(fileIn, fileOut),
+    #   warning = function(w) { wMessage <<- w },
+    #   finally = if (verbose) { cat(" DONE.\n") }
+    # )
+    #
+    # if (verbose) {
+    #   msg <- sprintf(
+    #     "      ^ WARNING: %s\n",
+    #     wMessage$message
+    #   )
+    #   cat(msg)
+    # }
   }
 }
 
@@ -173,8 +183,6 @@ build_yield <- function(shapes) {
 
   rowOrder      <- order(DF$site, DF$year, DF$record)
   DF            <- DF[rowOrder, ]
-  # columnOrder   <- c(1, 16, 2:15)
-  # DF            <- DF[rowOrder, columnOrder]
 
   DF
 }
@@ -226,11 +234,6 @@ postprocess_distance <- function(DF) {
 #' direction, distance, flow, moisture, yield.
 #' @return A numeric vector with an increasing index.
 postprocess_record <- function(DF) {
-  # ind     <-
-  #   DF$year %in% c("2013", "2014", "2015") & DF$site == "Orbweaver" |
-  #   DF$year == "2014" & DF$site == "Interim" |
-  #   DF$year == "2011" & DF$site == "Orbweaver"
-
   ind     <- seq_along(DF$record)
   splits  <- split(
     seq_along(DF$record[ind]),

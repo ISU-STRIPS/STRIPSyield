@@ -117,7 +117,7 @@ build_extra <- function(yieldDF, boundaryDF) {
     yieldDF,
     classify_watersheds(yieldDF, boundaryDF)
   )
-  colnames(yieldDF)[19] <- "vegetation"
+  colnames(yieldDF)[20] <- "vegetation"
 
   metaDF      <- as.data.frame(STRIPSMeta::watersheds[, c(1, 5, 6, 8, 9, 10, 11)])
   metaDF[, 4] <- factor(metaDF[, 4])
@@ -139,9 +139,9 @@ build_extra <- function(yieldDF, boundaryDF) {
   ord <- c(
     "site", "watershed", "watersheadPolygon", "watersheadArea", "block",
     "blockArea", "treatment", "prairiePercentage", "prairiePosition", "slope",
-    "year", "crop", "swath", "record", "pass", "date", "x", "y", "vegetation",
-    "elevation", "speed", "direction", "distance", "timelapse", "flow",
-    "moisture", "yield"
+    "year", "crop", "swath", "record", "pass", "date", "timelapse", "x", "y",
+    "vegetation", "elevation", "speed", "direction", "distance", "cycle",
+    "flow", "moisture", "yield"
   )
 
   extraDF[, ord]

@@ -80,6 +80,78 @@ curate_sitename <- function(x) {
   string_replace(x, patterns, replacements)
 }
 
+#' Return a curated name of sites based on coordinate matching.
+#'
+#' @param x A numeric vector with the coordinate longitudes.
+#' @param x A numeric vector with the coordinate latitudes.
+#' @return A character vector, or a vector of character vectors.
+#' @author Luis Damiano
+#' @example curate_sitename_by_coordinates(-93.27318, 41.55136)
+#' @seealso \code{\link{curate_sitename}}
+curate_sitename_by_coordinates <- function(x, y) {
+  boundingBox <- list(
+    "Basswood" = structure(
+      c(
+        -93.2772076728709, 41.5371017721844,
+        -93.2709883469505, 41.5405923162667
+      ),
+      .Dim = c(2L, 2L),
+      .Dimnames = list(c("x", "y"), c("min", "max"))
+    ),
+    "Interim" = structure(
+      c(
+        -93.2507355139719, 41.5551257323418,
+        -93.2458203134386, 41.5586092404122
+      ),
+      .Dim = c(2L, 2L),
+      .Dimnames = list(c("x", "y"), c("min", "max"))
+    ),
+    "Orbweaver north" = structure(
+      c(
+        -93.2752276820073, 41.5479136837798,
+        -93.2724683716671, 41.5513883161976
+      ),
+      .Dim = c(2L, 2L),
+      .Dimnames = list(c("x", "y"), c("min", "max"))
+    ),
+    "Orbweaver south" = structure(
+      c(
+        -93.2768816776079, 41.5429186837545,
+        -93.2751003222553, 41.5447880162087
+      ),
+      .Dim = c(2L, 2L),
+      .Dimnames = list(c("x", "y"), c("min", "max"))
+    )
+  )
+
+  is_within <- function(x, y, bbox) {
+    # https://stackoverflow.com/a/58438445
+    isLongInRange <- x >= bbox[1, 1] & x <= bbox[1, 2]
+    isLatInRange  <- y >= bbox[2, 1] & y <= bbox[2, 2]
+    isLongInRange & isLatInRange
+  }
+
+  # checks <- do.call(cbind, lapply(boundingBox, is_within, x = x, y = y))
+  checks <- data.frame(
+    lapply(boundingBox, is_within, x = x, y = y),
+    check.names = FALSE
+  )
+
+  if (sum(rowSums(checks) != 1))
+    warning(
+      sprintf(
+        "Found %d coordinates that didn't match any site",
+        sum(rowSums(checks) != 1)
+      )
+    )
+
+  checks$OffBounds <- FALSE
+  if (sum(rowSums(checks) == 0))
+    checks$OffBounds[which(rowSums(checks) == 0)] <- TRUE
+
+  colnames(checks)[apply(checks, 1, which)]
+}
+
 #' Return a curated name of watersheds based on pattern matching.
 #'
 #' @param x A character vector, or a vector of character vectors.
