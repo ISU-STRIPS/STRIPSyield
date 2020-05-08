@@ -15,11 +15,11 @@ nCores          <- 10                           # Number of cores for point coor
 
 # 1. Preamble -------------------------------------------------------------
 suppressPackageStartupMessages(library(shapefiles))
-source('data-raw/boundary.R')
-source('data-raw/build.R')
-source('data-raw/curate.R')
-source('data-raw/shapefiles.R')
-source('data-raw/yield.R')
+source('data-raw/R/boundary.R')
+source('data-raw/R/build.R')
+source('data-raw/R/curate.R')
+source('data-raw/R/shapefiles.R')
+source('data-raw/R/yield.R')
 
 # 2. Curate the shapefiles. -----------------------------------------------
 unlink(yieldPathOut, recursive = TRUE, force = TRUE)
@@ -66,4 +66,4 @@ usethis::use_data(yield,      overwrite = TRUE)
 usethis::use_data(yieldExtra, overwrite = TRUE)
 
 # 6. Build legacy datasets ------------------------------------------------
-source('data-raw/legacy.R')
+source('data-raw/R/legacy.R')

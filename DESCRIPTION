@@ -13,6 +13,9 @@ Depends:
 Imports:
     STRIPSMeta
 Suggests:
+    ggplot2,
+    shapefiles,
+    reshape2,
     tidyr,
     knitr,
     rmarkdown
@@ -21,6 +24,5 @@ Remotes:
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr
-

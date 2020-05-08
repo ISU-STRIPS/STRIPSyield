@@ -13,7 +13,7 @@ legacy_yield_conversion
 Conversions from bushels/acre to Mg/ha for corn and soybean
 }
 \examples{
-Convert from bushels per acre to Megagrams per hectare
+# Convert from bushels per acre to Megagrams per hectare
 library(dplyr)
 legacy_yield <- legacy_yield \%>\%
   left_join(legacy_yield_conversion, by="crop") \%>\%

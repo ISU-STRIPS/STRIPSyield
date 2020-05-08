@@ -15,7 +15,7 @@ Average crop yield for all watersheds from 2007-2016
 \examples{
 # Convert from bushels per acre to Megagrams per hectare
 library(dplyr)
-legacy_ <- legacy_ \%>\%
+legacy_yield <- legacy_yield \%>\%
   left_join(legacy_yield_conversion, by="crop") \%>\%
   mutate(yield_Mgha = dryyield_buac * Mgha_per_buac)
 }

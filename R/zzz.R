@@ -9,7 +9,7 @@
 .onAttach <- function(libname, pkgname) {
   packageStartupMessage(
     sprintf(
-      "Hello there! This is STRIPSyield v%s.\nRun vignette('data-curation') to learn more about the dataset, or run pnas_data() to access the data for the PNAS paper.",
+      "Run vignette('data-curation') to learn more about the dataset, or run pnas_data() to access the data for the PNAS paper.",
       utils::packageDescription("STRIPSyield")$Version
     )
   )
