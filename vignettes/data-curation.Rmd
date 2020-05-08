@@ -1,0 +1,384 @@
+---
+title: "Datasets: Description and Curation Protocol"
+author: "Luis Damiano, Jarad Niemi"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+colorlinks: true
+urlcolor: blue
+linkcolor: blue
+citecolor: red
+header-includes:
+  - \usepackage{hyperref}
+vignette: >
+  %\VignetteIndexEntry{STRIPS yield datasets: description and curation Protocol}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+\hypersetup{
+  colorlinks   = true,  % Colours links instead of ugly boxes
+  urlcolor     = blue,  % Colour for external hyperlinks
+  linkcolor    = blue,  % Colour of internal links
+  citecolor    = red    % Colour of citations
+}
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  echo     = FALSE,
+  cache    = FALSE,
+  comment  = "#>"
+)
+
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(shapefiles))
+suppressPackageStartupMessages(library(STRIPSyield))
+suppressPackageStartupMessages(library(reshape2))
+
+describe_shapefile <- function(shape) {
+  describe_column <- function(shape, columnName) {
+    column <- shape$dbf$dbf[, columnName]
+    data.frame(
+      name     = columnName,
+      class    = class(column)[1],
+      nFactors = if (is.factor(column)) { length(unique(column)) } else { NA },
+      min      = if (is.factor(column)) { NA } else { min(column)  },
+      mean     = if (is.factor(column)) { NA } else { mean(column) },
+      max      = if (is.factor(column)) { NA } else { max(column)  },
+      example  = trimws(as.character(column[1]))
+    )
+  }
+
+  do.call(
+    rbind,
+    lapply(colnames(shape$dbf$dbf), describe_column, shape = shape)
+  )
+}
+
+describe_yield <- function(yield) {
+  describe_column <- function(yield, columnName) {
+    column <- yield[, columnName]
+    data.frame(
+      name     = columnName,
+      class    = class(column)[1],
+      nFactors = if (is.factor(column)) { length(unique(column)) } else { NA },
+      min      = if (is.factor(column)) { NA } else { min(column)  },
+      mean     = if (is.factor(column)) { NA } else { mean(column) },
+      max      = if (is.factor(column)) { NA } else { max(column)  },
+      example  = trimws(as.character(column[1]))
+    )
+  }
+
+  do.call(
+    rbind,
+    lapply(colnames(yield), describe_column, yield = yield)
+  )
+}
+```
+
+# Accessing data
+
+## How to access the datasets
+
+The followings are the datasets contained in this R Package:
+
+* **Point-level yield monitor data**:
+    * **R data frames**: after the package is loaded, two objects `yield` and
+`yieldExtra` containing point-coordinate level yield data frames become
+available. These are described in Table \ref{tab:yieldExtra-description} and
+displayed in Figures \ref{fig:data-visualization-soybeans} and
+\ref{fig:data-visualization-corn}.
+    * **Shapefiles**: datasets in shapefile format are available as discussed in
+Section \ref{sec:curation-protocol}.
+* **PNAS paper**: to access the dataset from the PNAS paper [1], load the 
+package and run `pnas_data()`.
+
+```{r yieldExtra-description, eval = FALSE}
+dYield <- describe_yield(yieldExtra)
+units  <- c(
+  NA, NA, NA, "Hectare", NA, "Hectare", NA, "% (hundreds)", NA, 
+  "% (hundreds)", NA, NA, "Feet", "Integer", NA, 
+  NA, NA, "Unknown", "Unknown", NA, "Feet", "MPH", "Degrees", "Feet",
+  "Seconds", "Pounds per second", "% (hundreds)", "Bushels per acre (dry)"
+)
+extra <- ifelse(colnames(yieldExtra) %in% colnames(yield), "Yes", "No")
+colNames <- c(
+  "Name", "Class", "# of levels", "Min", "Mean", "Max", "Example"
+)
+
+tab <- cbind(dYield, units = units, "extra only" = extra)
+colnames(tab) <- c(colNames, "Measurement unit", "yieldExtra only")
+
+k <- knitr::kable(
+  tab,
+  format = "latex", booktabs = TRUE,
+  label = "yieldExtra-description",
+  caption = "Structure and content of the yield and yieldExtra datasets.",
+  digits = 2, format.args = list(scientific = FALSE)
+)
+
+kableExtra::kable_styling(k, latex_options = c("scale_down"))
+```
+
+## Terminology
+
+The dataset adheres to the terminology used in [2] to describe the experimental
+design.
+
+* __Site__: three locations within the Neal Smith National Wildlife Refuge
+(NSNWR) in central Iowa (namely Basswood, Interim, and Orbweaver).
+* __Blocks__: there are four blocks (namely BasswoodA, BasswoodB, Interim, and 
+Orbweaver).
+* __Watershed__: twelve experimental units (Basswood 1 to 6, Interim 1 to 3,
+Orbweaver 1 to 3).
+* __Field__: the portion of the whatershed planted with either row crops or 
+perennial vegetation.
+* __Treatment__: four watershed-scale treatments having different proportions 
+and topographic positions of PFS (no PFS, 10% PFS at toeslope position, 10% PFS 
+distributed on toe and contour strips, and 20% PFS distributed on toe 
+and contour strips).
+* __Coordinate point__: each of the spatial coordinate units with recorded 
+information (number and position of the points vary per year and treatment).
+
+# Curation protocol
+
+\label{sec:curation-protocol}
+
+## Folder structure
+
+In STRIPSyield v0.2.0, the datasets are stored in the folders: 
+`data-raw\source\YYYY-site.ext`.
+
+  - `legacy`: CSV existing in STRIPSYield v0.1.1 that were produced by an
+  unspecified methodology.
+  - `original`: shapefiles as received from the Coop. Besides modifying the file
+  name, file structure and content are kept intact.
+  - `curated`: new shapefiles originating from the curation protocol. Note that
+  this process modifies both the datasets structure and content.
+
+## Curation protocol
+
+Because not all the datasets have the same structure and measurement units, we
+create a curation protocol. We identify two patterns in the data sources, namely
+Template I (2007-2010 and 2012) and Template II (2013-2019 and 2011). We read
+the shapefiles from the `original` folder, apply the modifications mentioned
+below, and store the new shapefiles in the `curated` folder. These editing rules
+may be broadly classified into five actions:
+
+  - __Rename__: we modify the name of the variable but not the content.
+  - __Reformat__: we modify the name of the variable and the content
+  (e.g. change of measurement unit).
+  - __Drop__: we discard some content if it is not present in every shapefiles
+  across the years and sites.
+
+Although keeping both the original and the curated shapefiles result in
+significant storage redundancy, this procedure guarantees that no original data
+is lost in the process.
+
+### Naming convension
+
+File naming convention:
+
+* data-raw/yield_original/YYYY-site.ext
+* data-raw/yield_curated/YYYY-site.ext
+* Note that we use hyphen to separate words, and site names are lowercase.
+
+Column naming convention:
+
+* Use camelCase (e.g. prairiePosition). Note that the starting letter is
+lowercase.
+* No measurement units in the column names. For measurement units,
+see this vignette.
+
+Data structure convention:
+
+* All strings as factors.
+* All strings start with uppercase. (ex. Soybeans, Orbweaver).
+* Dates and timestamps are Date and POSIXct objects respectively.
+* Use `NA` for missing data.
+
+### Original shapefiles (2007-2010, 2012)
+
+The PROJ4 string defining the CRS of the coordinates recorded in these
+shapesfiles is `"+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84
++towgs84=0,0,0"`. Since the 2007-2010 and 2012 shapefiles are consistent,
+`2009-basswood` original shapefile structure is described in Table
+\ref{tab:2009-basswood-description}. To homogenenize measurement units, we
+rescale the columns `distance` and `swath` width from inches to foot.
+
+```{r 2009-basswood-description, eval = FALSE}
+shape2009  <- read.shapefile("../data-raw/yield_original/2009-basswood")
+dShape2009 <- describe_shapefile(shape2009)
+
+tab <- dShape2009
+colnames(tab) <- colNames
+k <- knitr::kable(
+  tab, 
+  format = "latex", booktabs = TRUE,
+  digits = 2, format.args = list(scientific = FALSE),
+  caption = "Structure and content of the Basswood 2015 original shapefile.",
+  label = "2009-basswood-description"
+)
+
+kableExtra::kable_styling(k, latex_options = c("scale_down"))
+```
+
+### Original shapefiles (2013-2019, 2011)
+
+The PROJ4 string defining the CRS of the coordinates recorded in these
+shapesfiles is `"+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84
++towgs84=0,0,0"`. Since the 2013-2019 and 2011 shapefiles are consistent, the
+`2015-basswood` original shapefile structure is described in Table
+\ref{tab:2015-basswood-description}.
+
+```{r 2015-basswood-description, eval = FALSE}
+shape2015  <- read.shapefile("../data-raw/yield_original/2015-basswood")
+dShape2015 <- describe_shapefile(shape2015)
+
+tab <- dShape2015
+colnames(tab) <- colNames
+k <- knitr::kable(
+  tab, 
+  format = "latex", booktabs = TRUE,
+  digits = 2, format.args = list(scientific = FALSE),
+  label = "2015-basswood-description",
+  caption = "Structure and content of the Basswood 2015 original shapefile."
+)
+
+kableExtra::kable_styling(k, latex_options = c("scale_down"))
+```
+
+### Curated shapefile (all years)
+
+The PROJ4 string defining the CRS of the coordinates recorded in these
+shapesfiles is `"+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84
++towgs84=0,0,0"` (no projections were needed). As the shapefile structure and
+content does not vary across the years and sites, the structure described in Table
+\ref{tab:curated-shapefile-description} is valid for every curated shapefile.
+
+```{r curated-shapefile-description, eval = FALSE}
+shape2015  <- read.shapefile("../data-raw/yield_curated/2015-basswood")
+dShape2015 <- describe_shapefile(shape2015)
+units      <- c(
+  NA, NA, "Feet", "Integer", "Integer", NA, "WGS84", "WGS84", "Feet above sea", 
+  "Miles per hour", "Arc degrees", "Feet", "Seconds", NA, "Pounds per second", 
+  "% (hundreds)", "Dry bushels per acre"
+)
+
+tab <- cbind(dShape2015[, 1:2], units)
+colnames(tab) <- c("Name", "Class", "Measurement unit")
+k <- knitr::kable(
+  tab,
+  format = "latex", booktabs = TRUE,
+  digits = 2, format.args = list(scientific = FALSE),
+    caption = "Structure a curated shapefile.",
+  label = "curated-shapefile-description"
+)
+
+kableExtra::kable_styling(k)
+```
+
+To build our consolidated shapefiles, we decided to keep only those variables
+recorded for every site and year (i.e. columns that were present in every source
+file). The only exceptions is `direction`, available for years 2013-2015 and
+2011 only, which we kept as partial information may be relevant for our future
+research.
+
+# References
+
+[1] Lisa A. Schulte, Jarad B. Niemi, Matthew J. Helmers, Matt Liebman, J. G.
+Arbuckle, David E. James, Randall K. Kolka, Matthew E. O’Neal, Mark D. Tomer,
+John C. Tyndall, Heidi Asbjornsen, Pauline Drobney, Jeri Neal, Gary Van Ryswyk,
+and Chris Witte (2017). “Prairie strips improve biodiversity and the delivery of
+multiple ecosystem services from corn-soybean croplands” Proceedings of the
+National Academy of Sciences, 114(42), 11247-11252.
+([url](http://www.pnas.org/content/114/42/11247.short))
+
+[2] Xiaobo Zhou, Matthew J. Helmers, Heidi J. Asbjornsen, Randy Kolka, and Mark
+D. Tomer (2010). "Perennial filter strips reduce nitrate levels in soil and
+shallow groundwater after grassland-to-cropland conversion" Journal of
+environmental quality, 39(6), 2006-2015.
+
+\clearpage
+
+# Data visualization
+
+\clearpage
+
+```{r data-visualization}
+plot_grid <- function(df, title = NULL) {
+  p <- ggplot(df) +
+  geom_violin(aes(x = year, y = value), draw_quantiles = c(0.5)) +
+  facet_grid(
+    rows = vars(variable),
+    cols = vars(site),
+    scales = "free"
+  ) +
+  labs(
+    title = title,
+    x     = "Year",
+    y     = "Values"
+  ) +
+  theme_bw() +
+  theme(
+    panel.grid.major.y = element_blank(),
+    axis.text.x        = element_text(angle = 90, hjust = 1)
+  )
+  
+  suppressWarnings(print(p))
+}
+
+keys <- c("site", "year", "crop", "record")
+cols <- c(
+  "swath", "elevation", "speed", "distance",
+  "cycle", "flow", "moisture", "yield"
+)
+
+yieldExtraLong <- melt(
+  data = yieldExtra,
+  id.vars = keys,
+  measure.vars = cols
+)
+```
+
+```{r, out.width = "\\textwidth", fig.width = 9, fig.height = 11, fig.cap = "\\label{fig:data-visualization-soybeans} Visualization of some selected `yieldExtra` data frame variables.", warning = FALSE}
+plot_grid(
+  df = yieldExtraLong[
+    yieldExtraLong$site != "OffBounds" & 
+    yieldExtraLong$crop == "Soybeans", 
+  ],
+  title = "Soybeans"
+)
+```
+
+```{r, out.width = "\\textwidth", fig.width = 9, fig.height = 11, fig.cap = "\\label{fig:data-visualization-corn} Visualization of some selected `yieldExtra` data frame variables.", warning = FALSE}
+plot_grid(
+  df = yieldExtraLong[
+    yieldExtraLong$site != "OffBounds" & 
+    yieldExtraLong$crop == "Corn", 
+  ],
+  title = "Maize"
+)
+```
+
+\clearpage
+
+# Tables
+
+\clearpage
+
+```{r yieldExtra-description, eval = TRUE}
+```
+
+```{r 2009-basswood-description, eval = TRUE}
+```
+
+```{r 2015-basswood-description, eval = TRUE}
+```
+
+```{r curated-shapefile-description, eval = TRUE}
+```
