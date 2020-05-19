@@ -1,6 +1,9 @@
-#' Return a curated data.frame for the `dbf` element of a shape list. This function may drop, modify headers, and modify the content of the original shape list.
+#' Return a curated data.frame for the `dbf` element of a shape list. This
+#' function may drop, modify headers, and modify the content of the original
+#' shape list.
 #'
-#' @param shape A named list with a valid structure for a shapefile (e.g. one created by \code{\link{read_shapefile}}).
+#' @param shape A named list with a valid structure for a shapefile (e.g. one
+#'   created by \code{\link{read_shapefile}}).
 #' @return A data.frame.
 #' @author Luis Damiano
 #' @seealso \code{\link{curate_dbf}}
@@ -32,9 +35,12 @@ curate_yield_dbf_template1 <- function(shape) {
   )
 }
 
-#' Return a curated data.frame for the `dbf` element of a shape list. This function may drop, modify headers, and modify the content of the original shape list.
+#' Return a curated data.frame for the `dbf` element of a shape list. This
+#' function may drop, modify headers, and modify the content of the original
+#' shape list.
 #'
-#' @param shape A named list with a valid structure for a shapefile (e.g. one created by \code{\link{read_shapefile}}).
+#' @param shape A named list with a valid structure for a shapefile (e.g. one
+#'   created by \code{\link{read_shapefile}}).
 #' @return A data.frame.
 #' @author Luis Damiano
 #' @seealso \code{\link{curate_dbf}}
@@ -72,9 +78,12 @@ curate_yield_dbf_template2 <- function(shape) {
   )
 }
 
-#' Return a curated data.frame for the `dbf` element of a shape list. This function may drop, modify headers, and modify the content of the original shape list.
+#' Return a curated data.frame for the `dbf` element of a shape list. This
+#' function may drop, modify headers, and modify the content of the original
+#' shape list.
 #'
-#' @param shape A named list with a valid structure for a shapefile (e.g. one created by \code{\link{read_shapefile}}).
+#' @param shape A named list with a valid structure for a shapefile (e.g. one
+#'   created by \code{\link{read_shapefile}}).
 #' @return A data.frame.
 #' @author Luis Damiano
 curate_dbf <- function(shape) {
@@ -93,13 +102,16 @@ curate_dbf <- function(shape) {
   curated
 }
 
-#' Write a curated shapefile to the disk. This function may drop, modify headers, and modify the content of the original shape.
+#' Write a curated shapefile to the disk. This function may drop, modify
+#' headers, and modify the content of the original shape.
 #'
 #' @param fileIn A character vector with the filename of the original shapefile.
-#' @param fileout A character vector with the desired filename of the curated shapefile.
+#' @param fileout A character vector with the desired filename of the curated
+#'   shapefile.
 #' @return Nothing.
 #' @author Luis Damiano
-#' @example curate_shapefile("data-raw/original/2009-basswood", "data-raw/curated/2009-basswood")
+#' @example curate_shapefile("data-raw/original/2009-basswood",
+#'   "data-raw/curated/2009-basswood")
 curate_shapefile <- function(fileIn, fileOut) {
   shape         <- read_shapefile(fileIn)
   shape$dbf$dbf <- curate_dbf(shape)
@@ -109,14 +121,19 @@ curate_shapefile <- function(fileIn, fileOut) {
 
 #' Run the curation protocol (see ?curation) in one or more shapefiles/
 #'
-#' @param pathIn A character vector with the filename of the original shapefile, or a path to a directory with one or more shapefiles.
-#' @param pathOut A character vector with the desired filename of the curated shapefile, or a path to a directory where the curated files should be written.
+#' @param pathIn A character vector with the filename of the original shapefile,
+#'   or a path to a directory with one or more shapefiles.
+#' @param pathOut A character vector with the desired filename of the curated
+#'   shapefile, or a path to a directory where the curated files should be
+#'   written.
 #' @param recursive If TRUE (default), the listing recurses into directories.
-#' @param verbose If TRUE (default), the function will print to the console information about the progress.
+#' @param verbose If TRUE (default), the function will print to the console
+#'   information about the progress.
 #' @return Nothing.
 #' @export
 #' @examples curate_all_yield_shapefiles("data-raw/original", "data-raw/curated")
-curate_all_yield_shapefiles <- function(pathIn, pathOut, recursive = TRUE, verbose = TRUE) {
+curate_all_yield_shapefiles <- function(pathIn, pathOut, recursive = TRUE,
+                                        verbose = TRUE) {
   filenames <- strip_extension(dir_shapefile(pathIn, recursive))
   nFiles    <- length(filenames)
   nChar     <- max(sapply(filenames, nchar))
@@ -142,30 +159,16 @@ curate_all_yield_shapefiles <- function(pathIn, pathOut, recursive = TRUE, verbo
     }
 
     curate_shapefile(fileIn, fileOut)
-
-    # Note: tryCatch stops the process when there is a warning
-    #
-    # wMessage <- NULL
-    # tryCatch(
-    #   expr    = curate_shapefile(fileIn, fileOut),
-    #   warning = function(w) { wMessage <<- w },
-    #   finally = if (verbose) { cat(" DONE.\n") }
-    # )
-    #
-    # if (verbose) {
-    #   msg <- sprintf(
-    #     "      ^ WARNING: %s\n",
-    #     wMessage$message
-    #   )
-    #   cat(msg)
-    # }
   }
 }
 
 #' Creates a `yield` data.frame from one or many shape lists.
 #'
-#' @param shapes A named list with a valid structure for a shapefile (e.g. one created by \code{\link{read_shapefile}}).
-#' @return A yield data.frame containing the following columns: site, year, crop, swath, record, date, x, y, elevation, speed, direction, distance, flow, moisture, yield.
+#' @param shapes A named list with a valid structure for a shapefile (e.g. one
+#'   created by \code{\link{read_shapefile}}).
+#' @return A yield data.frame containing the following columns: site, year,
+#'   crop, swath, record, date, x, y, elevation, speed, direction, distance,
+#'   flow, moisture, yield.
 build_yield <- function(shapes) {
   DF <- do.call(
     rbind,
@@ -177,6 +180,7 @@ build_yield <- function(shapes) {
   DF$swath      <- postprocess_swath(DF)
   DF$distance   <- postprocess_distance(DF)
   DF$record     <- postprocess_record(DF)
+  DF$yieldDryBuAc <- DF$yield
 
   rownames(DF)           <- NULL
   attr(DF, "data_types") <- NULL

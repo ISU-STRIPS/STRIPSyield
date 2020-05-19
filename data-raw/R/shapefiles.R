@@ -12,7 +12,8 @@ strip_extension <- function(x) {
 #'
 #' @param filename A character string with the full path to the file.
 #'
-#' @return A named list with the components of a shapefile (may include `shp`, `shx`, `dbf`).
+#' @return A named list with the components of a shapefile (may include `shp`,
+#'   `shx`, `dbf`).
 #' @export
 #' @author Luis Damiano
 #' @example shape <- read_shapefile("data-raw/original/2009-basswood")
@@ -22,8 +23,10 @@ read_shapefile <- function(filename) {
 
 #' Write a named list to the disk in a shapefile format.
 #'
-#' @param shape A named list with a valid structure for a shapefile (e.g. one created by \code{\link{read_shapefile}}).
-#' @param filename A character string with the full path to the target destination.
+#' @param shape A named list with a valid structure for a shapefile (e.g. one
+#'   created by \code{\link{read_shapefile}}).
+#' @param filename A character string with the full path to the target
+#'   destination.
 #'
 #' @return Nothing.
 #' @export
@@ -38,7 +41,8 @@ write_shapefile <- function(shape, filename) {
 #' @param path A character vector with the full path.
 #' @param recursive If TRUE (default), the listing recurses into directories.
 #'
-#' @return A vector of character vectors containing the names of the shapefiles in the specified path.
+#' @return A vector of character vectors containing the names of the shapefiles
+#'   in the specified path.
 #' @export
 #' @author Luis Damiano
 #' @example dir_shapefile("data-raw/original")
@@ -58,7 +62,8 @@ dir_shapefile <- function(path, recursive = TRUE) {
 #' @param path A character vector with the full path.
 #' @param recursive If TRUE (default), the listing recurses into directories.
 #'
-#' @return A named list where each element is itself a named list with the components of a shapefile (may include `shp`, `shx`, `dbf`).
+#' @return A named list where each element is itself a named list with the
+#'   components of a shapefile (may include `shp`, `shx`, `dbf`).
 #' @export
 #' @author Luis Damiano
 #' @example shapes <- read_all_shapefiles("data-raw/curated")

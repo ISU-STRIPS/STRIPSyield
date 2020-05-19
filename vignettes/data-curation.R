@@ -56,8 +56,13 @@ describe_yield <- function(yield) {
 #  units  <- c(
 #    NA, NA, NA, "Hectare", NA, "Hectare", NA, "% (hundreds)", NA,
 #    "% (hundreds)", NA, NA, "Feet", "Integer", NA,
-#    NA, NA, "LatLong", "LatLong", "UTM", "UTM", NA, "Feet", "MPH", "Degrees", "Feet",
-#    "Seconds", "Pounds per second", "% (hundreds)", "Bushels per acre (dry)"
+#    NA, NA, "LatLong", "LatLong", "UTM", "UTM", NA, "Feet", "MPH", "Degrees",
+#    "Feet", "Seconds", "Pounds per second", "% (hundreds)",
+#    "Pounds (dry)", "Pounds (std)", "Pounds (wet)",
+#    "Kilograms (dry)", "Kilograms (std)", "Kilograms (wet)",
+#    "Bushels per acre (dry)", "Bushels per acre (std)", "Bushels per acre (wet)",
+#    "Megagrams per hectare (dry)", "Megagrams per hectare (std)",
+#    "Megagrams per hectare (wet)"
 #  )
 #  extra <- ifelse(colnames(yieldExtra) %in% colnames(yield), "Yes", "No")
 #  colNames <- c(
@@ -156,7 +161,7 @@ plot_grid <- function(df, title = NULL) {
 keys <- c("site", "year", "crop", "record")
 cols <- c(
   "swath", "elevation", "speed", "distance",
-  "cycle", "flow", "moisture", "yield"
+  "cycle", "flow", "moisture", "yieldDryBuAc"
 )
 
 yieldExtraLong <- melt(
@@ -188,8 +193,13 @@ dYield <- describe_yield(yieldExtra)
 units  <- c(
   NA, NA, NA, "Hectare", NA, "Hectare", NA, "% (hundreds)", NA, 
   "% (hundreds)", NA, NA, "Feet", "Integer", NA, 
-  NA, NA, "LatLong", "LatLong", "UTM", "UTM", NA, "Feet", "MPH", "Degrees", "Feet",
-  "Seconds", "Pounds per second", "% (hundreds)", "Bushels per acre (dry)"
+  NA, NA, "LatLong", "LatLong", "UTM", "UTM", NA, "Feet", "MPH", "Degrees", 
+  "Feet", "Seconds", "Pounds per second", "% (hundreds)", 
+  "Pounds (dry)", "Pounds (std)", "Pounds (wet)",
+  "Kilograms (dry)", "Kilograms (std)", "Kilograms (wet)",
+  "Bushels per acre (dry)", "Bushels per acre (std)", "Bushels per acre (wet)",
+  "Megagrams per hectare (dry)", "Megagrams per hectare (std)", 
+  "Megagrams per hectare (wet)"
 )
 extra <- ifelse(colnames(yieldExtra) %in% colnames(yield), "Yes", "No")
 colNames <- c(

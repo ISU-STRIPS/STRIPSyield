@@ -118,7 +118,7 @@ build_extra <- function(yieldDF, boundaryDF) {
     yieldDF,
     classify_watersheds(yieldDF, boundaryDF)
   )
-  colnames(yieldDF)[20] <- "vegetation"
+  colnames(yieldDF)[colnames(yieldDF) == "watersheadVegetation"] <- "vegetation"
 
   # Add data watershed data
   metaDF      <- as.data.frame(
@@ -143,10 +143,29 @@ build_extra <- function(yieldDF, boundaryDF) {
     all.x = TRUE
   )
 
+  # Add extra yield and mass variables
+  extraDF$massWetLb     <- extraDF$flow * extraDF$timelapse
+  extraDF$massDryLb     <- extraDF$massWetLb / (1 + extraDF$moisture / 100)
+  extraDF$massStdLb     <- extraDF$massDryLb *
+    (1 + pmin(grain_market_moisture(extraDF$crop), extraDF$moisture) / 100)
+
+  extraDF$massWetKg    <- lbs_to_kgs(extraDF$massWetLb)
+  extraDF$massDryKg    <- lbs_to_kgs(extraDF$massDryLb)
+  extraDF$massStdKg    <- lbs_to_kgs(extraDF$massStdLb)
+
+  # extraDF$yieldDryBuAc comes from `yield`
+  extraDF$yieldWetBuAc  <- extraDF$yieldDryBuAc * (1 + extraDF$moisture / 100)
+  extraDF$yieldStdBuAc  <- extraDF$yieldDryBuAc *
+    (1 + pmin(grain_market_moisture(extraDF$crop), extraDF$moisture) / 100)
+
+  extraDF$yieldDryMgHa <- buac_to_kgha(extraDF$yieldDryBuAc, extraDF$crop)
+  extraDF$yieldWetMgHa <- buac_to_kgha(extraDF$yieldWetBuAc, extraDF$crop)
+  extraDF$yieldStdMgHa <- buac_to_kgha(extraDF$yieldStdBuAc, extraDF$crop)
+
   # Add coordinates in UTM
   coordinatesUTM <- coordinateLLtoUTM(extraDF$x, extraDF$y)
-  extraDF$xUTM <- coordinatesUTM[, "x"]
-  extraDF$yUTM <- coordinatesUTM[, "y"]
+  extraDF$xUTM   <- coordinatesUTM[, "x"]
+  extraDF$yUTM   <- coordinatesUTM[, "y"]
 
   # Order data frame
   rowOrder <- order(extraDF$site, extraDF$year, extraDF$record)
@@ -155,7 +174,11 @@ build_extra <- function(yieldDF, boundaryDF) {
     "blockArea", "treatment", "prairiePercentage", "prairiePosition", "slope",
     "year", "crop", "swath", "record", "pass", "date", "timelapse", "x", "y",
     "xUTM", "yUTM", "vegetation", "elevation", "speed", "direction", "distance",
-    "cycle", "flow", "moisture", "yield"
+    "cycle", "flow", "moisture",
+    "massDryLb", "massStdLb", "massWetLb",
+    "massDryKg", "massStdKg", "massWetKg",
+    "yieldDryBuAc", "yieldStdBuAc", "yieldWetBuAc",
+    "yieldDryMgHa", "yieldStdMgHa", "yieldWetMgHa"
   )
 
   extraDF[rowOrder, colOrder]

@@ -19,6 +19,7 @@ source('data-raw/R/boundary.R')
 source('data-raw/R/build.R')
 source('data-raw/R/curate.R')
 source('data-raw/R/gis.R')
+source('data-raw/R/measurements.R')
 source('data-raw/R/shapefiles.R')
 source('data-raw/R/yield.R')
 
@@ -58,7 +59,7 @@ yield          <- yieldExtra[
   ,
   c(
     "site", "watershed", "block", "treatment", "year", "crop", "x", "y",
-    "moisture", "yield"
+    "moisture", "yieldDryBuAc"
   )
 ]
 
