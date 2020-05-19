@@ -148,8 +148,9 @@ build_extra <- function(yieldDF, boundaryDF) {
   extraDF$xUTM <- coordinatesUTM[, "x"]
   extraDF$yUTM <- coordinatesUTM[, "y"]
 
-  # Order columns
-  ord <- c(
+  # Order data frame
+  rowOrder <- order(extraDF$site, extraDF$year, extraDF$record)
+  colOrder <- c(
     "site", "watershed", "watersheadPolygon", "watersheadArea", "block",
     "blockArea", "treatment", "prairiePercentage", "prairiePosition", "slope",
     "year", "crop", "swath", "record", "pass", "date", "timelapse", "x", "y",
@@ -157,5 +158,5 @@ build_extra <- function(yieldDF, boundaryDF) {
     "cycle", "flow", "moisture", "yield"
   )
 
-  extraDF[, ord]
+  extraDF[rowOrder, colOrder]
 }
