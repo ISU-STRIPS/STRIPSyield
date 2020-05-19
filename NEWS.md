@@ -1,3 +1,7 @@
+### v 0.2.1
+
+- Add UTM coordinates to `yieldExtra`.
+
 # 0.2.0.
 
 - Add start-up message.

@@ -113,13 +113,20 @@ classify_watersheds <- function(yieldDF, boundaryDF) {
 }
 
 build_extra <- function(yieldDF, boundaryDF) {
+  # Assign data points to watersheds
   yieldDF     <- cbind(
     yieldDF,
     classify_watersheds(yieldDF, boundaryDF)
   )
   colnames(yieldDF)[20] <- "vegetation"
 
-  metaDF      <- as.data.frame(STRIPSMeta::watersheds[, c(1, 5, 6, 8, 9, 10, 11)])
+  # Add data watershed data
+  metaDF      <- as.data.frame(
+    STRIPSMeta::watersheds[,
+      c("watershed", "size_ha", "slope_pct", "treatment", "prairie_pct",
+        "prairie_location", "block")
+    ]
+  )
   metaDF[, 4] <- factor(metaDF[, 4])
   metaDF[, 5] <- factor(metaDF[, 5])
   metaDF[, 6] <- factor(metaDF[, 6])
@@ -136,12 +143,18 @@ build_extra <- function(yieldDF, boundaryDF) {
     all.x = TRUE
   )
 
+  # Add coordinates in UTM
+  coordinatesUTM <- coordinateLLtoUTM(extraDF$x, extraDF$y)
+  extraDF$xUTM <- coordinatesUTM[, "x"]
+  extraDF$yUTM <- coordinatesUTM[, "y"]
+
+  # Order columns
   ord <- c(
     "site", "watershed", "watersheadPolygon", "watersheadArea", "block",
     "blockArea", "treatment", "prairiePercentage", "prairiePosition", "slope",
     "year", "crop", "swath", "record", "pass", "date", "timelapse", "x", "y",
-    "vegetation", "elevation", "speed", "direction", "distance", "cycle",
-    "flow", "moisture", "yield"
+    "xUTM", "yUTM", "vegetation", "elevation", "speed", "direction", "distance",
+    "cycle", "flow", "moisture", "yield"
   )
 
   extraDF[, ord]

@@ -17,6 +17,10 @@ To access raw and curated extended datasets, please see the vignette
 
 ## Changelog
 
+### v 0.2.1
+
+- Add UTM coordinates to `yieldExtra`.
+
 ### v 0.2.0
 
 - Add 2007-2010 and 2016-2019 shapefiles (2012-15 shapefiles come from v0.1.1).

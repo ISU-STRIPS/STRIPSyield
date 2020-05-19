@@ -18,6 +18,7 @@ suppressPackageStartupMessages(library(shapefiles))
 source('data-raw/R/boundary.R')
 source('data-raw/R/build.R')
 source('data-raw/R/curate.R')
+source('data-raw/R/gis.R')
 source('data-raw/R/shapefiles.R')
 source('data-raw/R/yield.R')
 

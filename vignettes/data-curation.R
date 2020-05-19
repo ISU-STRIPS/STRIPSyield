@@ -56,7 +56,7 @@ describe_yield <- function(yield) {
 #  units  <- c(
 #    NA, NA, NA, "Hectare", NA, "Hectare", NA, "% (hundreds)", NA,
 #    "% (hundreds)", NA, NA, "Feet", "Integer", NA,
-#    NA, NA, "Unknown", "Unknown", NA, "Feet", "MPH", "Degrees", "Feet",
+#    NA, NA, "LatLong", "LatLong", "UTM", "UTM", NA, "Feet", "MPH", "Degrees", "Feet",
 #    "Seconds", "Pounds per second", "% (hundreds)", "Bushels per acre (dry)"
 #  )
 #  extra <- ifelse(colnames(yieldExtra) %in% colnames(yield), "Yes", "No")
@@ -188,7 +188,7 @@ dYield <- describe_yield(yieldExtra)
 units  <- c(
   NA, NA, NA, "Hectare", NA, "Hectare", NA, "% (hundreds)", NA, 
   "% (hundreds)", NA, NA, "Feet", "Integer", NA, 
-  NA, NA, "Unknown", "Unknown", NA, "Feet", "MPH", "Degrees", "Feet",
+  NA, NA, "LatLong", "LatLong", "UTM", "UTM", NA, "Feet", "MPH", "Degrees", "Feet",
   "Seconds", "Pounds per second", "% (hundreds)", "Bushels per acre (dry)"
 )
 extra <- ifelse(colnames(yieldExtra) %in% colnames(yield), "Yes", "No")
