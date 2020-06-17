@@ -100,6 +100,8 @@ feet_to_miles   <- function(x) { x / 5280 }
 feet_to_meters  <- function(x) { x / 3.281 }
 meters_to_feet  <- function(x) { x * 3.281 }
 
+inches_to_feet  <- function(x) { x / 12 }
+
 sqft_to_sqmt    <- function(x) { x / 10.7639 }
 sqmt_to_sqft    <- function(x) { x * 10.7639 }
 
@@ -118,5 +120,3 @@ kgha_to_buac_soybean <- function(x) { x * 0.0149 }
 buac_to_kgha         <- function(x, crop) {
   ifelse(tolower(crop) == "corn", buac_to_kgha_corn(x), buac_to_kgha_soybean(x))
 }
-
-inches_to_feet  <- function(x) { x / 12 }

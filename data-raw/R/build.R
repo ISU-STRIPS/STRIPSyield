@@ -144,7 +144,7 @@ build_extra <- function(yieldDF, boundaryDF) {
   )
 
   # Add extra yield and mass variables
-  extraDF$massWetLb     <- extraDF$flow * extraDF$timelapse
+  extraDF$massWetLb     <- extraDF$flow * extraDF$cycle
   extraDF$massDryLb     <- extraDF$massWetLb / (1 + extraDF$moisture / 100)
   extraDF$massStdLb     <- extraDF$massDryLb *
     (1 + pmin(grain_market_moisture(extraDF$crop), extraDF$moisture) / 100)

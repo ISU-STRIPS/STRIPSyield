@@ -204,8 +204,8 @@ postprocess_year <- function(DF) {
 }
 
 #' Post processing rule for swath width.
-#' Rescale swath width from inches to foot for rows corresponding to
-#' years 2007, 2008, 2009, 2009, 2010, 2012.
+#' Rescale swath width from inches to feet for rows corresponding to
+#' years 2007, 2008, 2009, 2010, 2012.
 #'
 #' @param DF A yield data.frame containing the following columns:
 #' site, year, crop, swath, record, date, x, y, elevation, speed,
@@ -213,7 +213,7 @@ postprocess_year <- function(DF) {
 #' @return A numeric vector with swath width in foot.
 postprocess_swath <- function(DF) {
   ind <- DF$year %in% c("2007", "2008", "2009", "2010", "2012")
-  ifelse(ind, DF$swath / 12, DF$swath)
+  ifelse(ind, inches_to_feet(DF$swath), DF$swath)
 }
 
 #' Post processing rule for distance.
@@ -226,7 +226,7 @@ postprocess_swath <- function(DF) {
 #' @return A numeric vector with distance in foot.
 postprocess_distance <- function(DF) {
   ind <- DF$year %in% c("2007", "2008", "2009", "2010", "2012")
-  ifelse(ind, DF$distance / 12, DF$distance)
+  ifelse(ind, inches_to_feet(DF$distance), DF$distance)
 }
 
 #' Post processing rule for record.
