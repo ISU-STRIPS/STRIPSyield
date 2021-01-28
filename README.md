@@ -5,7 +5,7 @@ An R package containing STRIPS yield data.
 ## Install
 
 ```
-devtools::install_github("ISU-STRIPS/STRIPSyield", ref = "prep-v020", build_opts = c("--no-resave-data"))
+devtools::install_github("ISU-STRIPS/STRIPSyield", build_opts = c("--no-resave-data"))
 ```
 
 ## Data
