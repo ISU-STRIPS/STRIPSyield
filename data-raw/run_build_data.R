@@ -11,7 +11,7 @@ yieldPathIn     <- "data-raw/yield_original"    # Folder where the original shap
 yieldPathOut    <- "data-raw/yield_curated"     # Folder where the curated shapefiles will be stored
 boundaryPathIn  <- "data-raw/boundary_original" # Folder where the original shapefiles are stored
 boundaryPathOut <- "data-raw/boundary_curated"  # Folder where the curated shapefiles will be stored
-nCores          <- 10                           # Number of cores for point coordinates classification
+nCores          <- 19                           # Number of cores for point coordinates classification
 
 # 1. Preamble -------------------------------------------------------------
 suppressPackageStartupMessages(library(shapefiles))
